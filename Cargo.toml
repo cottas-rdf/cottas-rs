@@ -4,3 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+duckdb = { version = "1.4.2", features = ["bundled"] }
+rio_turtle = "0.8.5"   # Turtle and N-Triples
+rio_xml = "0.8.5"      # RDF/XML
