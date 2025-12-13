@@ -28,3 +28,7 @@ pub fn cottas2rdf(cottas_file_path: &str, rdf_file_path: &str) -> Result<(), Box
 
     Ok(())
 }
+
+pub fn search(query: &str) -> Result<(), Box<dyn Error>> {
+    Ok(())
+}
