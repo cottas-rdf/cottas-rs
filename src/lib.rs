@@ -33,7 +33,10 @@ pub fn cottas2rdf(cottas_file_path: &str, rdf_file_path: &str) -> Result<(), Box
     Ok(())
 }
 
-pub fn search(cottas_file_path: &str, triple_pattern: &str) -> Result<(), Box<dyn Error>> {
+pub fn search(
+    cottas_file_path: &str,
+    triple_pattern: &str,
+) -> Result<Vec<Vec<String>>, Box<dyn Error>> {
     search_in_duckdb(cottas_file_path, triple_pattern);
     Ok(())
 }
