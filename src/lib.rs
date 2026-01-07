@@ -3,15 +3,19 @@ pub mod export;
 pub mod parser;
 pub mod utils;
 
-use std::error::Error;
-use std::fs::File;
-pub use duckdb::{connection_in_memory, has_column, load_into_duckdb};
+pub use duckdb::{connection_in_memory, has_column, load_into_duckdb, search_in_duckdb};
 pub use export::{export_to_cottas, write_quads_to_file};
 pub use parser::parse_rdf_file;
+use std::error::Error;
+use std::fs::File;
 pub use utils::build_order_by;
 pub use utils::extract_format;
 
-pub fn rdf2cottas(rdf_file_path: &str, cottas_file_path: &str, index: &str) -> Result<(), Box<dyn Error>>{
+pub fn rdf2cottas(
+    rdf_file_path: &str,
+    cottas_file_path: &str,
+    index: &str,
+) -> Result<(), Box<dyn Error>> {
     let quads = parse_rdf_file(rdf_file_path)?;
     let quad_mode = quads.iter().any(|q| q.3.is_some());
     let conn = load_into_duckdb(&quads);
@@ -27,4 +31,11 @@ pub fn cottas2rdf(cottas_file_path: &str, rdf_file_path: &str) -> Result<(), Box
     write_quads_to_file(&conn, cottas_file_path, has_named_graph, &mut file)?;
 
     Ok(())
+}
+
+pub fn search(
+    cottas_file_path: &str,
+    triple_pattern: &str,
+) -> Result<Vec<Vec<String>>, Box<dyn Error>> {
+    search_in_duckdb(cottas_file_path, triple_pattern)
 }
