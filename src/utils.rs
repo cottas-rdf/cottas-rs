@@ -14,7 +14,7 @@ pub fn extract_format(path: &str) -> Option<&'static str> {
     }
 }
 
-fn is_valid_index(index: &str) -> bool {
+pub fn is_valid_index(index: &str) -> bool {
     let mut chars: Vec<char> = index.to_lowercase().chars().collect();
     chars.sort_unstable();
 
