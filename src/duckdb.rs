@@ -1,8 +1,8 @@
 pub use crate::parser::*;
+pub use crate::utils::is_valid_index;
 use duckdb::{Connection, ToSql};
 use std::error::Error;
 use std::fs;
-pub use crate::utils::is_valid_index;
 
 pub fn load_into_duckdb(quads: &[(String, String, String, Option<String>)]) -> Connection {
     let conn = connection_in_memory();
@@ -124,7 +124,12 @@ pub fn search_in_duckdb(
     Ok(results?)
 }
 
-pub fn cat(cottas_file_paths: &str, cottas_cat_file_path: &str, index:Option<&str>, remove_input_files:Option<&bool>)-> Result<(), Box<dyn Error>> {
+pub fn cat(
+    cottas_file_paths: &str,
+    cottas_cat_file_path: &str,
+    index: Option<&str>,
+    remove_input_files: Option<&bool>,
+) -> Result<(), Box<dyn Error>> {
     let index = index.unwrap_or("spo");
 
     if !is_valid_index(index) {

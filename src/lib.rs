@@ -40,6 +40,16 @@ pub fn search(
     search_in_duckdb(cottas_file_path, triple_pattern)
 }
 
-pub fn cat(cottas_file_paths: &str, cottas_cat_file_path: &str, index:Option<&str>, remove_input_files:Option<&bool>) -> Result<(), Box<dyn Error>> {
- cat(cottas_file_paths, cottas_cat_file_path, index, remove_input_files)
+pub fn cat(
+    cottas_file_paths: &str,
+    cottas_cat_file_path: &str,
+    index: Option<&str>,
+    remove_input_files: Option<&bool>,
+) -> Result<(), Box<dyn Error>> {
+    cat(
+        cottas_file_paths,
+        cottas_cat_file_path,
+        index,
+        remove_input_files,
+    )
 }
