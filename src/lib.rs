@@ -8,6 +8,7 @@ pub use export::{export_to_cottas, write_quads_to_file};
 pub use parser::parse_rdf_file;
 use std::error::Error;
 use std::fs::File;
+use ::duckdb::arrow::compute::or_kleene;
 pub use utils::extract_format;
 
 pub fn rdf2cottas(
@@ -55,3 +56,28 @@ pub fn cat(
         remove_input_files
     )
 }
+
+pub fn diff(cottas_file_1_path: &str, cottas_file_2_path: &str, cottas_diff_file_path: &str, index: Option<&str>, remove_input_files: Option<bool>) -> Result<(), Box<dyn Error>> {
+    // if index and !is_valid_index(index):
+    //     print(f"Index `{index}` is not valid.")
+    // return
+    //
+    // diff_query = f
+    // "COPY (SELECT * FROM (SELECT DISTINCT * FROM PARQUET_SCAN('{cottas_file_1_path}') EXCEPT SELECT * FROM PARQUET_SCAN('{cottas_file_2_path}'))"
+    // if index:
+    //     diff_query += " ORDER BY "
+    // for p in index:
+    //     diff_query += f
+    // "{p}, "
+    // diff_query = diff_query
+    // [: -2]
+    // diff_query += f
+    // ") TO '{cottas_diff_file_path}' (FORMAT PARQUET, COMPRESSION ZSTD, COMPRESSION_LEVEL 22, PARQUET_VERSION v2, KV_METADATA {{index: '{index.lower()}'}})"
+    // duckdb.execute(diff_query)
+    //
+    // if remove_input_files:
+    //     os.remove(cottas_file_1_path)
+    //     os.remove(cottas_file_2_path)
+    Ok(())
+}
+
