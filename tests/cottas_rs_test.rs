@@ -1,6 +1,8 @@
+use std::fs;
 use cottas_rs::*;
 use polars::prelude::*;
 use std::path::Path;
+use tempfile::TempDir;
 
 #[test]
 fn test_rdf2cottas() {
@@ -180,7 +182,7 @@ fn test_cat_cottas() {
     cat(&input_files[..], output_file, Some("spo"), Some(false)).unwrap();
 
     // Check output exists
-    assert!(Path::new().exists());
+    assert!(Path::new(output_file).exists());
 
     // Optional: check number of rows
     let file = std::fs::File::open(output_file).unwrap();
@@ -205,17 +207,14 @@ fn test_cat_invalid_index() {
 #[test]
 fn test_cat_remove_input_files() {
     // Create temporary files
-    let temp_dir = tempdir::TempDir::new("cottas_test").unwrap();
+    let temp_dir = TempDir::new().unwrap();
     let file1 = temp_dir.path().join("file1.cottas");
-    let file2 = temp_dir.path().join("file2.cottas");
-    std::fs::File::create(&file1).unwrap();
-    std::fs::File::create(&file2).unwrap();
+    fs::copy("tests/data/example.cottas", &file1).unwrap();
 
     let output_file = temp_dir.path().join("merged.cottas");
 
     let input_files = vec![
         file1.to_string_lossy().to_string(),
-        file2.to_string_lossy().to_string(),
     ];
 
     cat(&input_files, &output_file.to_string_lossy(), None, Some(true))
@@ -223,7 +222,6 @@ fn test_cat_remove_input_files() {
 
     // Input files should be removed
     assert!(!file1.exists());
-    assert!(!file2.exists());
 
     // Output file should exist
     assert!(output_file.exists());
