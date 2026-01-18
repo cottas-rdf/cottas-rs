@@ -1,0 +1,5 @@
+@prefix ex: <http://example.org/> .
+
+ex:Stephanya ex:knows ex:Simon .
+ex:Paco ex:knows ex:Principe .
+ex:Puppy ex:knows ex:Stephanya .

@@ -3,7 +3,11 @@ pub mod export;
 pub mod parser;
 pub mod utils;
 
-pub use duckdb::{connection_in_memory, has_column, load_into_duckdb, search_in_duckdb, cat_duckdb};
+use crate::duckdb::diff_duckdb;
+use ::duckdb::arrow::compute::or_kleene;
+pub use duckdb::{
+    cat_duckdb, connection_in_memory, has_column, load_into_duckdb, search_in_duckdb,
+};
 pub use export::{export_to_cottas, write_quads_to_file};
 pub use parser::parse_rdf_file;
 use std::error::Error;
@@ -40,10 +44,10 @@ pub fn search(
 }
 
 pub fn cat(
-    cottas_file_paths: &[String],
+    cottas_file_paths: &[String], //array of file paths
     cottas_cat_file_path: &str,
     index: Option<&str>,
-    remove_input_files: Option<bool>
+    remove_input_files: Option<bool>,
 ) -> Result<(), Box<dyn Error>> {
     let index = index.unwrap_or("spo");
     let remove_input_files = remove_input_files.unwrap_or(false);
@@ -52,6 +56,25 @@ pub fn cat(
         cottas_file_paths,
         cottas_cat_file_path,
         index,
-        remove_input_files
+        remove_input_files,
+    )
+}
+
+pub fn diff(
+    cottas_file_1_path: &str,
+    cottas_file_2_path: &str,
+    cottas_diff_file_path: &str,
+    index: Option<&str>,
+    remove_input_files: Option<bool>,
+) -> Result<(), Box<dyn Error>> {
+    let index = index.unwrap_or("spo");
+    let remove_input_files = remove_input_files.unwrap_or(false);
+
+    diff_duckdb(
+        cottas_file_1_path,
+        cottas_file_2_path,
+        cottas_diff_file_path,
+        index,
+        remove_input_files,
     )
 }

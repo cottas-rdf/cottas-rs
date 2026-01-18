@@ -1,13 +1,13 @@
-use std::fs;
 use cottas_rs::*;
 use polars::prelude::*;
+use std::fs;
 use std::path::Path;
 use tempfile::TempDir;
 
 #[test]
 fn test_rdf2cottas() {
-    let source_file = "tests/data/example.ttl";
-    let target_file = "tests/data/output.cottas";
+    let source_file = "tests/data/example1.ttl";
+    let target_file = "tests/data/example1.cottas";
     let index = "spo";
 
     rdf2cottas(source_file, target_file, index).unwrap();
@@ -213,16 +213,42 @@ fn test_cat_remove_input_files() {
 
     let output_file = temp_dir.path().join("merged.cottas");
 
-    let input_files = vec![
-        file1.to_string_lossy().to_string(),
-    ];
+    let input_files = vec![file1.to_string_lossy().to_string()];
 
-    cat(&input_files, &output_file.to_string_lossy(), None, Some(true))
-        .unwrap();
+    cat(
+        &input_files,
+        &output_file.to_string_lossy(),
+        None,
+        Some(true),
+    )
+    .unwrap();
 
     // Input files should be removed
     assert!(!file1.exists());
 
     // Output file should exist
     assert!(output_file.exists());
+}
+
+#[test]
+fn test_diff_cottas() {
+    let file1 = "tests/data/example1.cottas";
+    let file2 = "tests/data/example2.cottas";
+    let output_file = "tests/data/diff_output.cottas";
+
+    // Call the diff function
+    diff(file1, file2, output_file, Some("spo"), Some(true)).unwrap();
+
+    // Check output exists
+    assert!(Path::new(output_file).exists());
+
+    // Check the diff file can be read and has data
+    let file = std::fs::File::open(output_file).unwrap();
+    let df = ParquetReader::new(file).finish().unwrap();
+
+    println!("Diff result: {} rows", df.height());
+    println!("{:?}", df.head(Some(5)));
+
+    // Cleanup
+    std::fs::remove_file(output_file).ok();
 }
