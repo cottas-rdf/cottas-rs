@@ -1,7 +1,10 @@
 pub use crate::parser::*;
 use crate::utils::build_order_by;
 pub use crate::utils::is_valid_index;
+use chrono::{DateTime, Utc};
 use duckdb::{Connection, ToSql};
+use serde::{Deserialize, Serialize};
+use std::collections::HashSet;
 use std::error::Error;
 use std::fs;
 
@@ -224,4 +227,131 @@ pub fn diff_duckdb(
     }
 
     Ok(())
+}
+
+pub fn verify_duckdb(cottas_file_path: &str) -> Result<bool, Box<dyn Error>> {
+    let conn = connection_in_memory();
+
+    let verify_query = format!(
+        "DESCRIBE SELECT * FROM PARQUET_SCAN('{}') LIMIT 1",
+        cottas_file_path
+    );
+
+    let mut stmt = conn.prepare(&verify_query)?;
+    let rows = stmt.query_map([], |row| {
+        let column_name: String = row.get(0)?;
+        Ok(column_name)
+    })?;
+
+    let mut cottas_columns = HashSet::new();
+    for row in rows {
+        cottas_columns.insert(row?);
+    }
+
+    for pos in ['s', 'p', 'o'] {
+        if !cottas_columns.contains(&pos.to_string()) {
+            return Ok(false);
+        }
+    }
+
+    let valid_columns: HashSet<String> = ['s', 'p', 'o', 'g']
+        .iter()
+        .map(|&c| c.to_string())
+        .collect();
+
+    let is_valid = cottas_columns.is_subset(&valid_columns);
+
+    Ok(is_valid)
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CottasInfo {
+    pub index: String,
+    pub triples: i64,
+    pub triples_groups: i64,
+    pub properties: i64,
+    pub distinct_subjects: i64,
+    pub distinct_objects: i64,
+    pub issued: String,
+    pub size_mb: f64,
+    pub compression: String,
+    pub quads: bool,
+}
+
+pub fn info_duckdb(cottas_file_path: &str) -> Result<CottasInfo, Box<dyn Error>> {
+    let conn = connection_in_memory();
+
+    // Get file metadata
+    let metadata = fs::metadata(cottas_file_path)?;
+    let ctime = metadata.created().or_else(|_| metadata.modified())?;
+    let cottas_issued: DateTime<Utc> = ctime.into();
+    let size_mb = metadata.len() as f64 / 1_000_000.0;
+
+    // Build queries
+    let kv_query = format!(
+        "SELECT * FROM PARQUET_KV_METADATA('{}') WHERE key='index'",
+        cottas_file_path
+    );
+    let row_query = format!(
+        "SELECT num_rows AS triples, num_row_groups AS triples_groups FROM PARQUET_FILE_METADATA('{}')",
+        cottas_file_path
+    );
+    let properties_query = format!(
+        "SELECT COUNT(DISTINCT p) FROM PARQUET_SCAN('{}')",
+        cottas_file_path
+    );
+    let distinct_subjects_query = format!(
+        "SELECT COUNT(DISTINCT s) FROM PARQUET_SCAN('{}')",
+        cottas_file_path
+    );
+    let distinct_objects_query = format!(
+        "SELECT COUNT(DISTINCT o) FROM PARQUET_SCAN('{}')",
+        cottas_file_path
+    );
+    let schema_query = format!(
+        "DESCRIBE SELECT * FROM PARQUET_SCAN('{}') LIMIT 1",
+        cottas_file_path
+    );
+    let compression_query = format!(
+        "SELECT compression FROM PARQUET_METADATA('{}')",
+        cottas_file_path
+    );
+
+    // Execute queries and collect results
+    let index: String = conn.query_row(&kv_query, [], |row| {
+        let value: Vec<u8> = row.get(2)?;
+        Ok(String::from_utf8_lossy(&value).to_string())
+    })?;
+
+    let (triples, triples_groups): (i64, i64) =
+        conn.query_row(&row_query, [], |row| Ok((row.get(0)?, row.get(1)?)))?;
+
+    let properties: i64 = conn.query_row(&properties_query, [], |row| row.get(0))?;
+    let distinct_subjects: i64 = conn.query_row(&distinct_subjects_query, [], |row| row.get(0))?;
+    let distinct_objects: i64 = conn.query_row(&distinct_objects_query, [], |row| row.get(0))?;
+    let compression: String = conn.query_row(&compression_query, [], |row| row.get(0))?;
+
+    // Check if 'g' column exists (quads)
+    let mut stmt = conn.prepare(&schema_query)?;
+    let column_names: Vec<String> = stmt
+        .query_map([], |row| {
+            let col_name: String = row.get(0)?;
+            Ok(col_name)
+        })?
+        .collect::<Result<Vec<_>, _>>()?;
+
+    let quads = column_names.contains(&"g".to_string());
+
+    Ok(CottasInfo {
+        index,
+        triples,
+        triples_groups,
+        properties,
+        distinct_subjects,
+        distinct_objects,
+        issued: cottas_issued.to_rfc3339(),
+        size_mb,
+        compression,
+        quads,
+    })
 }

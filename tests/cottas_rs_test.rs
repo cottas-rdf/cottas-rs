@@ -6,8 +6,8 @@ use tempfile::TempDir;
 
 #[test]
 fn test_rdf2cottas() {
-    let source_file = "tests/data/example1.ttl";
-    let target_file = "tests/data/example1.cottas";
+    let source_file = "tests/data/example.ttl";
+    let target_file = "tests/data/example_2cottas.cottas";
     let index = "spo";
 
     rdf2cottas(source_file, target_file, index).unwrap();
@@ -232,6 +232,18 @@ fn test_cat_remove_input_files() {
 
 #[test]
 fn test_diff_cottas() {
+    let source_file1 = "tests/data/example1.ttl";
+    let target_file1 = "tests/data/example1.cottas";
+    let index = "spo";
+
+    rdf2cottas(source_file1, target_file1, index).unwrap();
+
+    let source_file2 = "tests/data/example2.ttl";
+    let target_file2 = "tests/data/example2.cottas";
+    let index = "spo";
+
+    rdf2cottas(source_file2, target_file2, index).unwrap();
+
     let file1 = "tests/data/example1.cottas";
     let file2 = "tests/data/example2.cottas";
     let output_file = "tests/data/diff_output.cottas";
@@ -251,4 +263,10 @@ fn test_diff_cottas() {
 
     // Cleanup
     std::fs::remove_file(output_file).ok();
+}
+
+#[test]
+fn test_verify_valid_cottas() {
+    let result = verify("tests/data/example.cottas").unwrap();
+    assert!(result, "Should be a valid cottas file");
 }
