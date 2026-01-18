@@ -6,8 +6,8 @@ use tempfile::TempDir;
 
 #[test]
 fn test_rdf2cottas() {
-    let source_file = "tests/data/example1.ttl";
-    let target_file = "tests/data/example1.cottas";
+    let source_file = "tests/data/example.ttl";
+    let target_file = "tests/data/example.cottas";
     let index = "spo";
 
     rdf2cottas(source_file, target_file, index).unwrap();
@@ -232,6 +232,11 @@ fn test_cat_remove_input_files() {
 
 #[test]
 fn test_diff_cottas() {
+    let source_file = "tests/data/example1.ttl";
+    let target_file = "tests/data/example1.cottas";
+    let index = "spo";
+
+    rdf2cottas(source_file, target_file, index).unwrap();
     let file1 = "tests/data/example.cottas";
     let file2 = "tests/data/example1.cottas";
     let output_file = "tests/data/diff_output.cottas";
