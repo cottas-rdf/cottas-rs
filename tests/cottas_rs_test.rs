@@ -7,7 +7,7 @@ use tempfile::TempDir;
 #[test]
 fn test_rdf2cottas() {
     let source_file = "tests/data/example.ttl";
-    let target_file = "tests/data/example.cottas";
+    let target_file = "tests/data/example_2cottas.cottas";
     let index = "spo";
 
     rdf2cottas(source_file, target_file, index).unwrap();
