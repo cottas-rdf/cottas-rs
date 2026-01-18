@@ -229,3 +229,32 @@ fn test_cat_remove_input_files() {
     // Output file should exist
     assert!(output_file.exists());
 }
+
+#[test]
+fn test_diff_cottas() {
+    let file1 = "tests/data/example1.cottas";
+    let file2 = "tests/data/example2.cottas";
+    let output_file = "tests/data/diff_output.cottas";
+
+    // Call the diff function
+    diff(file1, file2, output_file, "spo").unwrap();
+
+    // Check output exists
+    assert!(Path::new(output_file).exists());
+
+    // Check the diff file can be read and has data
+    let file = std::fs::File::open(output_file).unwrap();
+    let df = ParquetReader::new(file).finish().unwrap();
+
+    // Verify it has the expected columns
+    let columns = df.get_column_names();
+    assert!(columns.contains(&"s"), "Missing 's' column");
+    assert!(columns.contains(&"p"), "Missing 'p' column");
+    assert!(columns.contains(&"o"), "Missing 'o' column");
+
+    println!("Diff result: {} rows", df.height());
+    println!("{:?}", df.head(Some(5)));
+
+    // Cleanup
+    std::fs::remove_file(output_file).ok();
+}

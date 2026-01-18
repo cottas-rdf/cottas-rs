@@ -144,7 +144,7 @@ pub fn cat_duckdb(
         .join(", ");
 
     // Open DuckDB connection
-    let conn = connection_in_memory()?;
+    let conn = connection_in_memory();
 
     // Use build_order_by (Python-style: quad_mode = false)
     let order_by = build_order_by(index, false);
@@ -190,7 +190,7 @@ pub fn diff_duckdb(
     }
 
     // Open DuckDB connection
-    let conn = connection_in_memory()?;
+    let conn = connection_in_memory();
 
     // Use build_order_by (Python-style: quad_mode = false)
     let order_by = build_order_by(index, false);
