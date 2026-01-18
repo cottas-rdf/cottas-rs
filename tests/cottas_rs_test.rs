@@ -1,6 +1,6 @@
-use std::fs;
 use cottas_rs::*;
 use polars::prelude::*;
+use std::fs;
 use std::path::Path;
 use tempfile::TempDir;
 
@@ -213,12 +213,15 @@ fn test_cat_remove_input_files() {
 
     let output_file = temp_dir.path().join("merged.cottas");
 
-    let input_files = vec![
-        file1.to_string_lossy().to_string(),
-    ];
+    let input_files = vec![file1.to_string_lossy().to_string()];
 
-    cat(&input_files, &output_file.to_string_lossy(), None, Some(true))
-        .unwrap();
+    cat(
+        &input_files,
+        &output_file.to_string_lossy(),
+        None,
+        Some(true),
+    )
+    .unwrap();
 
     // Input files should be removed
     assert!(!file1.exists());

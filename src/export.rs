@@ -1,8 +1,8 @@
+use crate::utils::build_order_by;
 use duckdb::Connection;
 use std::error::Error;
 use std::fs::File;
 use std::io::Write;
-use crate::utils::build_order_by;
 
 pub fn export_to_cottas(conn: &Connection, index: &str, path: &str, quad_mode: bool) {
     let select = if quad_mode {
