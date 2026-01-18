@@ -3,7 +3,7 @@ pub mod export;
 pub mod parser;
 pub mod utils;
 
-use crate::duckdb::diff_duckdb;
+use crate::duckdb::{diff_duckdb, info_duckdb, verify_duckdb, CottasInfo};
 use ::duckdb::arrow::compute::or_kleene;
 pub use duckdb::{
     cat_duckdb, connection_in_memory, has_column, load_into_duckdb, search_in_duckdb,
@@ -77,4 +77,12 @@ pub fn diff(
         index,
         remove_input_files,
     )
+}
+
+pub fn info(cottas_file_path: &str) -> Result<CottasInfo, Box<dyn Error>> {
+    info_duckdb(cottas_file_path)
+}
+
+pub fn verify(cottas_file_path: &str) -> Result<bool, Box<dyn Error>> {
+    verify_duckdb(cottas_file_path)
 }

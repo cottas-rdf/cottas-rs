@@ -232,8 +232,8 @@ fn test_cat_remove_input_files() {
 
 #[test]
 fn test_diff_cottas() {
-    let file1 = "tests/data/example1.cottas";
-    let file2 = "tests/data/example2.cottas";
+    let file1 = "tests/data/example.cottas";
+    let file2 = "tests/data/example1.cottas";
     let output_file = "tests/data/diff_output.cottas";
 
     // Call the diff function
@@ -251,4 +251,10 @@ fn test_diff_cottas() {
 
     // Cleanup
     std::fs::remove_file(output_file).ok();
+}
+
+#[test]
+fn test_verify_valid_cottas() {
+    let result = verify("tests/data/example.cottas").unwrap();
+    assert!(result, "Should be a valid cottas file");
 }
