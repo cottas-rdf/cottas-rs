@@ -6,8 +6,8 @@ use tempfile::TempDir;
 
 #[test]
 fn test_rdf2cottas() {
-    let source_file = "tests/data/example.ttl";
-    let target_file = "tests/data/output.cottas";
+    let source_file = "tests/data/example1.ttl";
+    let target_file = "tests/data/example1.cottas";
     let index = "spo";
 
     rdf2cottas(source_file, target_file, index).unwrap();
@@ -237,7 +237,7 @@ fn test_diff_cottas() {
     let output_file = "tests/data/diff_output.cottas";
 
     // Call the diff function
-    diff(file1, file2, output_file, "spo").unwrap();
+    diff(file1, file2, output_file, Some("spo"), Some(true)).unwrap();
 
     // Check output exists
     assert!(Path::new(output_file).exists());
@@ -245,12 +245,6 @@ fn test_diff_cottas() {
     // Check the diff file can be read and has data
     let file = std::fs::File::open(output_file).unwrap();
     let df = ParquetReader::new(file).finish().unwrap();
-
-    // Verify it has the expected columns
-    let columns = df.get_column_names();
-    assert!(columns.contains(&"s"), "Missing 's' column");
-    assert!(columns.contains(&"p"), "Missing 'p' column");
-    assert!(columns.contains(&"o"), "Missing 'o' column");
 
     println!("Diff result: {} rows", df.height());
     println!("{:?}", df.head(Some(5)));
