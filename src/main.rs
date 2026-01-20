@@ -5,7 +5,7 @@ use cottas_rs::*;
 
 #[derive(Parser)]
 #[command(name = "cottas")]
-#[command(about = "COTTAS CLI tool", version)]
+#[command(about = "COTTAS implementation and CLI written in Rust", version)]
 struct Cli {
     #[command(subcommand)]
     command: Commands,
