@@ -63,14 +63,10 @@ enum Commands {
     },
 
     /// Show info about a COTTAS file
-    Info {
-        cottas_file_path: String,
-    },
+    Info { cottas_file_path: String },
 
     /// Verify a COTTAS file
-    Verify {
-        cottas_file_path: String,
-    },
+    Verify { cottas_file_path: String },
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
