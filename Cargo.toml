@@ -9,7 +9,7 @@ keywords = ["rdf", "parquet", "duckdb", "cottas"]
 license = "Apache-2.0. See LICENSE file for details."
 repository = "https://github.com/cottas-rdf/cottas-rs"
 readme = "README.md"
-rust-version = "1.65"
+rust-version = "1.91.1"
 
 [dependencies]
 duckdb = { version = "1.4.2", features = ["bundled"] }
