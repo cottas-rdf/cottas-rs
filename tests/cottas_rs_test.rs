@@ -3,6 +3,7 @@ use polars::prelude::*;
 use std::fs;
 use std::path::Path;
 use tempfile::TempDir;
+use std::process::Command;
 
 #[test]
 fn test_rdf2cottas() {
@@ -269,4 +270,14 @@ fn test_diff_cottas() {
 fn test_verify_valid_cottas() {
     let result = verify("tests/data/example.cottas").unwrap();
     assert!(result, "Should be a valid cottas file");
+}
+
+#[test]
+fn cli_help_works() {
+    let output = Command::new("cargo")
+        .args(["run", "--", "--help"])
+        .output()
+        .expect("failed to run CLI");
+
+    assert!(String::from_utf8_lossy(&output.stdout).contains("COTTAS"));
 }
