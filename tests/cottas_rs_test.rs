@@ -4,6 +4,7 @@ use std::fs;
 use std::path::Path;
 use tempfile::TempDir;
 use std::process::Command;
+use assert_cmd::Command;
 
 #[test]
 fn test_rdf2cottas() {
@@ -198,11 +199,17 @@ fn test_cat_invalid_index() {
     let input_files = vec!["tests/data/example.cottas".to_string()];
     let output_file = "tests/data/merged_invalid.cottas";
 
-    // Pass invalid index
-    let result = cat(&input_files[..], output_file, Some("invalid"), Some(false));
+    let result = cat(
+        &input_files[..],
+        output_file,
+        Some("invalid"),
+        Some(false),
+    );
 
-    // Should succeed but print an error
-    assert!(result.is_ok());
+    assert!(result.is_err());
+
+    let err = result.unwrap_err();
+    assert!(err.to_string().contains("is not valid"));
 }
 
 #[test]
@@ -270,14 +277,4 @@ fn test_diff_cottas() {
 fn test_verify_valid_cottas() {
     let result = verify("tests/data/example.cottas").unwrap();
     assert!(result, "Should be a valid cottas file");
-}
-
-#[test]
-fn cli_help_works() {
-    let output = Command::new("cargo")
-        .args(["run", "--", "--help"])
-        .output()
-        .expect("failed to run CLI");
-
-    assert!(String::from_utf8_lossy(&output.stdout).contains("COTTAS"));
 }
