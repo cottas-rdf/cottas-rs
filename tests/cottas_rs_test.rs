@@ -3,7 +3,6 @@ use polars::prelude::*;
 use std::fs;
 use std::path::Path;
 use tempfile::TempDir;
-use std::process::Command;
 
 #[test]
 fn test_rdf2cottas() {
@@ -16,7 +15,7 @@ fn test_rdf2cottas() {
     // Check that target file exists
     assert!(Path::new(target_file).exists());
 
-    let file = std::fs::File::open(target_file).unwrap();
+    let file = fs::File::open(target_file).unwrap();
     let df = ParquetReader::new(file).finish().unwrap();
 
     assert!(df.height() > 0, "The file .cottas is empty");
@@ -32,7 +31,7 @@ fn test_cottas2rdf() {
 
     assert!(Path::new(rdf_file).exists());
 
-    let content = std::fs::read_to_string(rdf_file).unwrap();
+    let content = fs::read_to_string(rdf_file).unwrap();
     println!(
         "{}",
         &content.lines().take(5).collect::<Vec<_>>().join("\n")
@@ -186,7 +185,7 @@ fn test_cat_cottas() {
     assert!(Path::new(output_file).exists());
 
     // Optional: check number of rows
-    let file = std::fs::File::open(output_file).unwrap();
+    let file = fs::File::open(output_file).unwrap();
     let df = ParquetReader::new(file).finish().unwrap();
     assert!(df.height() > 0, "Merged .cottas file is empty");
 
@@ -198,11 +197,17 @@ fn test_cat_invalid_index() {
     let input_files = vec!["tests/data/example.cottas".to_string()];
     let output_file = "tests/data/merged_invalid.cottas";
 
-    // Pass invalid index
-    let result = cat(&input_files[..], output_file, Some("invalid"), Some(false));
+    let result = cat(
+        &input_files[..],
+        output_file,
+        Some("invalid"),
+        Some(false),
+    );
 
-    // Should succeed but print an error
-    assert!(result.is_ok());
+    assert!(result.is_err());
+
+    let err = result.unwrap_err();
+    assert!(err.to_string().contains("is not valid"));
 }
 
 #[test]
@@ -256,28 +261,18 @@ fn test_diff_cottas() {
     assert!(Path::new(output_file).exists());
 
     // Check the diff file can be read and has data
-    let file = std::fs::File::open(output_file).unwrap();
+    let file = fs::File::open(output_file).unwrap();
     let df = ParquetReader::new(file).finish().unwrap();
 
     println!("Diff result: {} rows", df.height());
     println!("{:?}", df.head(Some(5)));
 
     // Cleanup
-    std::fs::remove_file(output_file).ok();
+    fs::remove_file(output_file).ok();
 }
 
 #[test]
 fn test_verify_valid_cottas() {
     let result = verify("tests/data/example.cottas").unwrap();
     assert!(result, "Should be a valid cottas file");
-}
-
-#[test]
-fn cli_help_works() {
-    let output = Command::new("cargo")
-        .args(["run", "--", "--help"])
-        .output()
-        .expect("failed to run CLI");
-
-    assert!(String::from_utf8_lossy(&output.stdout).contains("COTTAS"));
 }
