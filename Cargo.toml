@@ -11,6 +11,7 @@ categories = ["database", "data-structures", "parsing"]
 keywords = ["rdf", "parquet", "duckdb", "cottas"]
 license = "Apache-2.0"
 repository = "https://github.com/cottas-rdf/cottas-rs"
+documentation = "https://docs.rs/cottas-rs"
 readme = "README.md"
 rust-version = "1.91.1"
 
