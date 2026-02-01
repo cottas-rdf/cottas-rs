@@ -16,7 +16,7 @@ fn test_rdf2cottas() {
     // Check that target file exists
     assert!(Path::new(target_file).exists());
 
-    let file = std::fs::File::open(target_file).unwrap();
+    let file = fs::File::open(target_file).unwrap();
     let df = ParquetReader::new(file).finish().unwrap();
 
     assert!(df.height() > 0, "The file .cottas is empty");
@@ -32,7 +32,7 @@ fn test_cottas2rdf() {
 
     assert!(Path::new(rdf_file).exists());
 
-    let content = std::fs::read_to_string(rdf_file).unwrap();
+    let content = fs::read_to_string(rdf_file).unwrap();
     println!(
         "{}",
         &content.lines().take(5).collect::<Vec<_>>().join("\n")
@@ -186,7 +186,7 @@ fn test_cat_cottas() {
     assert!(Path::new(output_file).exists());
 
     // Optional: check number of rows
-    let file = std::fs::File::open(output_file).unwrap();
+    let file = fs::File::open(output_file).unwrap();
     let df = ParquetReader::new(file).finish().unwrap();
     assert!(df.height() > 0, "Merged .cottas file is empty");
 
@@ -256,14 +256,14 @@ fn test_diff_cottas() {
     assert!(Path::new(output_file).exists());
 
     // Check the diff file can be read and has data
-    let file = std::fs::File::open(output_file).unwrap();
+    let file = fs::File::open(output_file).unwrap();
     let df = ParquetReader::new(file).finish().unwrap();
 
     println!("Diff result: {} rows", df.height());
     println!("{:?}", df.head(Some(5)));
 
     // Cleanup
-    std::fs::remove_file(output_file).ok();
+    fs::remove_file(output_file).ok();
 }
 
 #[test]

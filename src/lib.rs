@@ -54,10 +54,8 @@ pub fn rdf2cottas(
 pub fn cottas2rdf(cottas_file_path: &str, rdf_file_path: &str) -> Result<(), Box<dyn Error>> {
     let conn = connection_in_memory();
     let has_named_graph = has_column(&conn, cottas_file_path, "g")?;
-
     let mut file = File::create(rdf_file_path)?;
     write_quads_to_file(&conn, cottas_file_path, has_named_graph, &mut file)?;
-
     Ok(())
 }
 
@@ -82,7 +80,7 @@ pub fn search(
 //! Concatenates multiple Cottas files into one.
 //!
 //! # Arguments
-//! * `cottas_file_paths` - List of input file paths.
+//! * `cottas_file_paths` - Array of input file paths
 //! * `cottas_cat_file_path` - Output file path.
 //! * `index` - Optional index type.
 //! * `remove_input_files` - Optionally remove input files after concatenation.
@@ -90,7 +88,7 @@ pub fn search(
 //! # Errors
 //! Returns an error if concatenation fails.
 pub fn cat(
-    cottas_file_paths: &[String], //array of file paths
+    cottas_file_paths: &[String],
     cottas_cat_file_path: &str,
     index: Option<&str>,
     remove_input_files: Option<bool>,
