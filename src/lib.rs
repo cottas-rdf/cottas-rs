@@ -1,3 +1,11 @@
+//! Main library API for COTTAS-RS based on PYCOTTAS.
+//!
+//! # Modules
+//! - `duckdb`: DuckDB integration and utilities.
+//! - `export`: Exporting data to Cottas format.
+//! - `parser`: RDF file parsing utilities.
+//! - `utils`: Helper functions.
+
 pub mod duckdb;
 pub mod export;
 pub mod parser;
@@ -12,15 +20,6 @@ pub use parser::parse_rdf_file;
 use std::error::Error;
 use std::fs::File;
 pub use utils::extract_format;
-
-//! Main library API for COTTAS-RS based on PYCOTTAS.
-//!
-//! # Modules
-//! - `duckdb`: DuckDB integration and utilities.
-//! - `export`: Exporting data to Cottas format.
-//! - `parser`: RDF file parsing utilities.
-//! - `utils`: Helper functions.
-//!
 
 /// Converts an RDF file to a Cottas file, using the specified index.
 ///
