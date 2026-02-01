@@ -268,8 +268,8 @@ fn test_diff_cottas() {
 
 #[test]
 fn test_info_real_cottas() {
-    let source_file = "tests/data/example1.ttl";
-    let target_file = "tests/data/example1.cottas";
+    let source_file = "tests/data/example3.ttl";
+    let target_file = "tests/data/example3.cottas";
     let index = "spo";
 
     rdf2_cottas(source_file, target_file, index).unwrap();
