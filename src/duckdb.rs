@@ -376,7 +376,7 @@ pub struct CottasInfo {
 /// * `Ok(CottasInfo)` with file metadata and statistics.
 ///
 pub fn info_duckdb(cottas_file_path: &str) -> Result<CottasInfo, Box<dyn Error>> {
-    let conn = connection_in_memory(); // your existing function
+    let conn = connection_in_memory();
 
     // Get file metadata
     let metadata = fs::metadata(cottas_file_path)?;
