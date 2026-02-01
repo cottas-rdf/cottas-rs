@@ -197,12 +197,7 @@ fn test_cat_invalid_index() {
     let input_files = vec!["tests/data/example.cottas".to_string()];
     let output_file = "tests/data/merged_invalid.cottas";
 
-    let result = cat(
-        &input_files[..],
-        output_file,
-        Some("invalid"),
-        Some(false),
-    );
+    let result = cat(&input_files[..], output_file, Some("invalid"), Some(false));
 
     assert!(result.is_err());
 
@@ -269,6 +264,23 @@ fn test_diff_cottas() {
 
     // Cleanup
     fs::remove_file(output_file).ok();
+}
+
+#[test]
+fn test_info_real_cottas() {
+    let source_file = "tests/data/example1.ttl";
+    let target_file = "tests/data/example1.cottas";
+    let index = "spo";
+
+    rdf2_cottas(source_file, target_file, index).unwrap();
+
+    // Call info_duckdb
+    let info = info(target_file).unwrap();
+
+    assert!(info.triples > 0);
+    assert!(info.distinct_subjects > 0);
+    assert!(info.distinct_objects > 0);
+    assert!(info.quads == false);
 }
 
 #[test]

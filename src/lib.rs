@@ -42,7 +42,6 @@ pub fn rdf2_cottas(
     Ok(())
 }
 
-
 /// Converts a Cottas file back to RDF format.
 ///
 /// # Arguments
