@@ -10,7 +10,7 @@ fn test_rdf2cottas() {
     let target_file = "tests/data/example_2cottas.cottas";
     let index = "spo";
 
-    rdf2cottas(source_file, target_file, index).unwrap();
+    rdf2_cottas(source_file, target_file, index).unwrap();
 
     // Check that target file exists
     assert!(Path::new(target_file).exists());
@@ -23,11 +23,11 @@ fn test_rdf2cottas() {
 }
 
 #[test]
-fn test_cottas2rdf() {
+fn test_cottas2_rdf() {
     let cottas_file = "tests/data/example.cottas";
     let rdf_file = "tests/data/output.rdf";
 
-    cottas2rdf(cottas_file, rdf_file).unwrap();
+    cottas2_rdf(cottas_file, rdf_file).unwrap();
 
     assert!(Path::new(rdf_file).exists());
 
@@ -242,13 +242,13 @@ fn test_diff_cottas() {
     let target_file1 = "tests/data/example1.cottas";
     let index = "spo";
 
-    rdf2cottas(source_file1, target_file1, index).unwrap();
+    rdf2_cottas(source_file1, target_file1, index).unwrap();
 
     let source_file2 = "tests/data/example2.ttl";
     let target_file2 = "tests/data/example2.cottas";
     let index = "spo";
 
-    rdf2cottas(source_file2, target_file2, index).unwrap();
+    rdf2_cottas(source_file2, target_file2, index).unwrap();
 
     let file1 = "tests/data/example1.cottas";
     let file2 = "tests/data/example2.cottas";
